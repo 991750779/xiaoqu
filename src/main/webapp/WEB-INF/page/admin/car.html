@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>车位信息</title>
+    #parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+            <div class="form-group col-sm-2">
+                <input type="text" class="form-control" v-model="q.name" @keyup.enter="query" placeholder="车位号">
+            </div>
+            <div class="form-group col-sm-2">
+                <select name="" id="" class="form-control" :disabled="showInfo" v-model="q.user">
+                    <option value="">-全部业主-</option>
+                    <option :value="l.userId" v-for="l in list">{{l.username}}</option>
+                </select>
+            </div>
+
+            <a class="btn btn-default" @click="query">查询</a>
+            #if($shiro.hasPermission("car:save"))
+            <a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+            #end
+            #if($shiro.hasPermission("car:update"))
+            <a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+            #end
+            #if($shiro.hasPermission("car:delete"))
+            <a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+            #end
+            <a class="btn btn-primary" @click="info"><i class="fa fa-info"></i>&nbsp;详情</a>
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="!showList" class="panel panel-success">
+        <div class="panel-heading">{{title}}</div>
+        <form class="form-horizontal">
+            <div class="form-group">
+                <div class="col-sm-2 control-label">车位号</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" :disabled="showInfo" v-model="car.name" placeholder="车位号"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-2 control-label">面积</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" :disabled="showInfo" v-model="car.size" placeholder="面积"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">类型</div>
+                <div class="col-sm-10">
+                    <select name="" id="" class="form-control" :disabled="showInfo" v-model="car.type">
+                        <option value="微型车位">微型车位</option>
+                        <option value="标准车位">标准车位</option>
+                        <option value="豪华车位">豪华车位</option>
+                        <option value="子母车位">子母车位</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">所属业主</div>
+                <div class="col-sm-10">
+                    <select name="" id="" class="form-control" :disabled="showInfo" v-model="car.user">
+                        <option :value="l.userId" v-for="l in list">{{l.username}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">到期时间</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" :disabled="showInfo" v-model="car.time"
+
+                           onclick="layui.laydate({elem: this, istime: false, format: 'YYYY-MM-DD', choose: function(date){vm.car.time=date;}})"
+                           placeholder="到期时间，不填写则为永久"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定" v-if="!showInfo"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="${rc.contextPath}/js/admin/car.js?_${date.systemTime}"></script>
+</body>
+</html>

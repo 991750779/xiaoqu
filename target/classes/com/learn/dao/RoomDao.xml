@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.learn.dao.RoomDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.learn.entity.RoomEntity" id="roomMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="house" column="house"/>
+        <result property="size" column="size"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.learn.entity.RoomEntity">
+		select * from room where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.learn.entity.RoomEntity">
+		select * from room where 1=1
+		<if test="name != null and name != ''">
+			and name like '%${name}%'
+		</if>
+
+																						
+
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from room  where 1=1
+        <if test="name != null and name != ''">
+            and name like '%${name}%'
+        </if>
+																							</select>
+	 
+	<insert id="save" parameterType="com.learn.entity.RoomEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into room
+		(
+			`name`, 
+			`house`, 
+			`size`
+		)
+		values
+		(
+			#{name}, 
+			#{house}, 
+			#{size}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.learn.entity.RoomEntity">
+		update room 
+		<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="house != null">`house` = #{house}, </if>
+			<if test="size != null">`size` = #{size}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from room where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from room where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>
